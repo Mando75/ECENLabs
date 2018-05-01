@@ -33,7 +33,7 @@ int main(void)
    // print various number types, setting the precision for floats
    printf("Users pay rate: $%.1f\n", payRate);
    printf(" Hours worked: %d\n", hours);
-   printf("    Gross Pay: $%.1f\n", (hours * payRate));
+   printf("    Gross Pay: $%.0f\n", (hours * payRate));
 
    int number;
    // print to stderr using fprintf
@@ -98,7 +98,8 @@ int main(void)
 
    printf("\tOct   Dec   Hex   Char\n");
    printf("\t----------------------\n");
-   for (int letter = 97; letter <= 122; letter++)
+   int letter = 97;
+   for (letter; letter <= 122; letter++)
    {
       printf("\t%o   %-5d %-5x %c\n", letter, letter, letter, letter);
    }
