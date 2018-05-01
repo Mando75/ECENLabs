@@ -98,9 +98,11 @@ int main(void)
 
    printf("\tOct   Dec   Hex   Char\n");
    printf("\t----------------------\n");
-   int letter = 97;
+   int letter = 97; // use integer value for character
    for (letter; letter <= 122; letter++)
    {
+      // %o, %d, %x, %c used for printing integer, Octal, Decimal, Hex, and Character
+      // values respectively
       printf("\t%o   %-5d %-5x %c\n", letter, letter, letter, letter);
    }
    printf("\n");
@@ -112,6 +114,7 @@ int main(void)
    int *p1;
    int *p2;
 
+   // malloc replaces new. You must pass it the size of the memory to be allocated
    p1 = (int *) malloc(sizeof(int));
    *p1 = 42;
    p2 = p1;
@@ -122,6 +125,7 @@ int main(void)
    printf("*p1 == %d\n", *p1);
    printf("*p2 == %d\n", *p2);
 
+   // allocate some new memory
    p1 = (int *) malloc(sizeof(int));
    *p1 = 88;
 
@@ -130,6 +134,7 @@ int main(void)
 
    printf("Hope you got the point of this example!\n");
 
+   // free is used to deallocate
    free(p1);
    free(p2);
 
