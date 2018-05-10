@@ -3,9 +3,10 @@
 *    Lab Datalab
 *    Brother Jones, ECEN 324
 * Author:
-*    Your Name
+*    Bryan Muller
 * Summary:
-*    descriptive text
+*    This file contains several challenge problems intended to
+*    teach us more about bitwise operators
 ***********************************************************************/
 
 /* 
@@ -32,24 +33,24 @@
  * STEP 1: Fill in the following struct with your identifying info.
  */
 team_struct team =
-{
-   /* Team name: Replace with either:
-      Your login ID (Linux Lab username) if working as a one person team
-      or, ID1+ID2 where ID1 is the login ID of the first team member
-      and ID2 is the login ID of the second team member.
-       Example: joestudent+zmename */
-    "", 
-   /* Student name 1: Replace with the name of first team member */
-   "",
-   /* Login ID 1: Replace with the login ID of first team member */
-   "",
+        {
+                /* Team name: Replace with either:
+                   Your login ID (Linux Lab username) if working as a one person team
+                   or, ID1+ID2 where ID1 is the login ID of the first team member
+                   and ID2 is the login ID of the second team member.
+                    Example: joestudent+zmename */
+                "mando0975+agehring",
+                /* Student name 1: Replace with the name of first team member */
+                "Bryan Muller",
+                /* Login ID 1: Replace with the login ID of first team member */
+                "mando0975",
 
-   /* The following should only be changed if there are two team members */
-   /* Student name 2: Name of the second team member */
-   "",
-   /* Login ID 2: Login ID of the second team member */
-   ""
-};
+                /* The following should only be changed if there are two team members */
+                /* Student name 2: Name of the second team member */
+                "Adam Gehring",
+                /* Login ID 2: Login ID of the second team member */
+                "agehring"
+        };
 
 #if 0
 /*
@@ -166,9 +167,12 @@ NOTES:
  *   Rating: 1
  */
 int bitNor(int x, int y) {
-  return 2;
+    /* This is an application of DeMorgan's law
+     * to distribute the negation*/
+    return ~x & ~y;
 }
-/* 
+
+/*
  * bitXor - x^y using only ~ and & 
  *   Example: bitXor(4, 5) = 1
  *   Legal ops: ~ &
@@ -176,14 +180,17 @@ int bitNor(int x, int y) {
  *   Rating: 2
  */
 int bitXor(int x, int y) {
-
-
-
-
-  return 2;
-
+/**
+ *  Uses nand operations to produce a xor
+ */
+    int nand1 = ~(x & y);
+    int nand2 = ~(x & nand1);
+    int nand3 = ~(y & nand1);
+    int nand4 = ~(nand2 & nand3);
+    return nand4;
 }
-/* 
+
+/*
  * isNotEqual - return 0 if x == y, and 1 otherwise 
  *   Examples: isNotEqual(5,5) = 0, isNotEqual(4,5) = 1
  *   Legal ops: ! ~ & ^ | + << >>
@@ -191,9 +198,15 @@ int bitXor(int x, int y) {
  *   Rating: 2
  */
 int isNotEqual(int x, int y) {
-  return 2;
+    /**
+     * If x and y are equal, xor will produce 0x00
+     * To turn that into a value of 0x00 or 0x01 (true/false)
+     * We need to use the logical not (!) twice.
+     */
+    return !!(x ^ y);
 }
-/* 
+
+/*
  * getByte - Extract byte n from word x
  *   Bytes numbered from 0 (LSB) to 3 (MSB)
  *   Examples: getByte(0x12345678,1) = 0x56
@@ -202,9 +215,16 @@ int isNotEqual(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return 2;
+    /**
+     * Shifts x n bytes
+     * Uses a mask to get the last byte
+     */
+    n = n << 3;
+    x = x >> n;
+    return x & 0xFF;
 }
-/* 
+
+/*
  * copyLSB - set all bits of result to least significant bit of x
  *   Example: copyLSB(5) = 0xFFFFFFFF, copyLSB(6) = 0x00000000
  *   Legal ops: ! ~ & ^ | + << >>
@@ -212,9 +232,15 @@ int getByte(int x, int n) {
  *   Rating: 2
  */
 int copyLSB(int x) {
-  return 2;
+    /**
+     * Executes a right shift to move LSB to the MSB
+     * Then executes a right shift to move the MSB back to the LSB
+     */
+    int y = x << 31;
+    return y >> 31;
 }
-/* 
+
+/*
  * logicalShift - shift x to the right by n, using a logical shift
  *   Can assume that 1 <= n <= 31
  *   Examples: logicalShift(0x87654321,4) = 0x08765432
@@ -223,8 +249,19 @@ int copyLSB(int x) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+    /**
+     *  shift x n to the right
+     *  Create a mask by shifting 1 (-n + 32) and adding ~0
+     *  This will convert the arithmetically changed bits back
+     *  to their logical values.
+     */
+    x = x >> n;
+    int negN= ~n + 1;
+    int maxVal = ~0;
+    int mask = (1 << (negN + 32)) + maxVal;
+    return x & mask;
 }
+
 /*
  * bitCount - returns count of number of 1's in word
  *   Examples: bitCount(5) = 2, bitCount(7) = 3
@@ -233,9 +270,10 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  return 2;
+    return 2;
 }
-/* 
+
+/*
  * bang - Compute !x without using !
  *   Examples: bang(3) = 0, bang(0) = 1
  *   Legal ops: ~ & ^ | + << >>
@@ -243,9 +281,10 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+    return 2;
 }
-/* 
+
+/*
  * leastBitPos - return a mask that marks the position of the
  *               least significant 1 bit. If x == 0, return 0
  *   Example: leastBitPos(96) = 0x20
@@ -254,18 +293,31 @@ int bang(int x) {
  *   Rating: 4 
  */
 int leastBitPos(int x) {
-  return 2;
+    /**
+     * By inverting and adding one, we create
+     * a mask that will return the position
+     * of the least significant 1 bit.
+     */
+    int negX = ~x + 1;
+    return x & negX;
 }
-/* 
+
+/*
  * TMax - return maximum two's complement integer 
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 4
  *   Rating: 1
  */
 int tmax(void) {
-  return 2;
+    /**
+     * Shift one to the 32nd position,
+     * not the bitstring, and you will have
+     * a zero followed by 31 ones = maxVal.
+     */
+    return ~(0x1 << 31);
 }
-/* 
+
+/*
  * isNonNegative - return 1 if x >= 0, return 0 otherwise 
  *   Example: isNonNegative(-1) = 0.  isNonNegative(0) = 1.
  *   Legal ops: ! ~ & ^ | + << >>
@@ -273,9 +325,10 @@ int tmax(void) {
  *   Rating: 3
  */
 int isNonNegative(int x) {
-  return 2;
+    return 2;
 }
-/* 
+
+/*
  * isGreater - if x > y  then return 1, else return 0 
  *   Example: isGreater(4,5) = 0, isGreater(5,4) = 1
  *   Legal ops: ! ~ & ^ | + << >>
@@ -283,9 +336,10 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;
+    return 2;
 }
-/* 
+
+/*
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
  *  Round toward zero
  *   Examples: divpwr2(15,1) = 7, divpwr2(-33,4) = -2
@@ -296,7 +350,8 @@ int isGreater(int x, int y) {
 int divpwr2(int x, int n) {
     return 2;
 }
-/* 
+
+/*
  * abs - absolute value of x (except returns TMin for TMin)
  *   Example: abs(-1) = 1.
  *   Legal ops: ! ~ & ^ | + << >>
@@ -304,9 +359,10 @@ int divpwr2(int x, int n) {
  *   Rating: 4
  */
 int abs(int x) {
-  return 2;
+    return 2;
 }
-/* 
+
+/*
  * addOK - Determine if can compute x+y without overflow
  *   Example: addOK(0x80000000,0x80000000) = 0,
  *            addOK(0x80000000,0x70000000) = 1, 
@@ -315,5 +371,5 @@ int abs(int x) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+    return 2;
 }
