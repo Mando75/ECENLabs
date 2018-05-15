@@ -255,10 +255,11 @@ int logicalShift(int x, int n) {
      *  This will convert the arithmetically changed bits back
      *  to their logical values.
      */
-    x = x >> n;
     int negN= ~n + 1;
     int maxVal = ~0;
+    // this mask will consist of n leading 0s followed by 32 - n 1s
     int mask = (1 << (negN + 32)) + maxVal;
+    x = x >> n;
     return x & mask;
 }
 
@@ -270,7 +271,21 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-    return 2;
+    /**
+     * Based off of what Brother Jones presented in class, with help
+     * from the book Hacker's Delight pg. 66.
+     * 35 operations
+     */
+    int mask1 = ((((((0x55 << 8) + 0x55) << 8) + 0x55) << 8) + 0x55);
+    int mask2 = ((((((0x33 << 8) + 0x33) << 8) + 0x33) << 8) + 0x33);
+    int mask3 = ((((((0x0F << 8) + 0x0F) << 8) + 0x0F) << 8) + 0x0F);
+
+    x = x + (~((x >> 1) & mask1) + 0x01);
+    x = (x & mask2) + ((x >> 2) & mask2);
+    x = (x + (x >> 4)) & mask3;
+    x = x + (x >> 8);
+    x = x + (x >> 16);
+    return x & 0x3f;
 }
 
 /*
@@ -281,7 +296,12 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-    return 2;
+    /**
+     * //TODO Add description
+     */
+    int invX = ~x;
+    int negX = invX + 1;
+    return ((~negX  & invX) >> 31) & 1;
 }
 
 /*
@@ -325,7 +345,14 @@ int tmax(void) {
  *   Rating: 3
  */
 int isNonNegative(int x) {
-    return 2;
+    /**
+     * Isolates the most significant bit
+     * via masking and returns whether
+     * the number is negative
+     */
+    int mask = 0x1 << 31;
+    int masked = x & mask;
+    return (masked >> 31) + 1;
 }
 
 /*
@@ -336,7 +363,23 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-    return 2;
+    /**
+     *  Checks the msb of x and y
+     *  Also checks if x and y are equal
+     */
+    int msbX = !((x >> 31) + 1);
+    int msbY = !((y >> 31) + 1);
+    /**
+     * when x is larger, then the sign bit of (~y + x) is 0
+     * when y is larger, then the sign bit of (~y + x) is 1
+     */
+    int mask = ((~y + x) >> 31);
+    /* Checks if signs are equal */
+    int equal = (!(msbX ^ msbY)) & mask;
+
+    int lessThan = msbX & !msbY;
+
+    return !(equal | lessThan);
 }
 
 /*
@@ -348,7 +391,16 @@ int isGreater(int x, int y) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+    /**
+     * I used StackOverflow for help on this one.
+     * https://stackoverflow.com/questions/5061093/dividing-by-power-of-2-using-bit-shifting
+     *
+     */
+     // shift msb to first position
+     int shifted = x >> 31;
+     // create a mask by shifting n over 1 and adding -1
+     int mask = (1 << n) + ~0;
+     return (x + (shifted & mask)) >> n;
 }
 
 /*
@@ -359,7 +411,13 @@ int divpwr2(int x, int n) {
  *   Rating: 4
  */
 int abs(int x) {
-    return 2;
+    /**
+     * Uses the msb to transform negative numbers
+     * into their positive values
+     **/
+    int msbX = x >> 31;
+    int invMsb = (~msbX) + 1;
+    return((x ^ (msbX)) + invMsb);
 }
 
 /*
@@ -371,5 +429,14 @@ int abs(int x) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-    return 2;
+    /**
+     * Uses the msb of the sum of x and y, along with
+     * the msb of x and y to determine whether or not
+     * sum x + y overflowed
+     */
+    int sum = x + y;
+    int msbSum = (~(sum >> 31)) + 1;
+    int msbX = (~(x >> 31)) + 1;
+    int msbY = (~(y >> 31)) + 1;
+    return !((~(msbX ^ msbY)) & (msbY ^ msbSum));
 }
