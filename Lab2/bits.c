@@ -255,7 +255,7 @@ int logicalShift(int x, int n) {
      *  This will convert the arithmetically changed bits back
      *  to their logical values.
      */
-    int negN= ~n + 1;
+    int negN = ~n + 1;
     int maxVal = ~0;
     // this mask will consist of n leading 0s followed by 32 - n 1s
     int mask = (1 << (negN + 32)) + maxVal;
@@ -301,7 +301,7 @@ int bang(int x) {
      */
     int invX = ~x;
     int negX = invX + 1;
-    return ((~negX  & invX) >> 31) & 1;
+    return ((~negX & invX) >> 31) & 1;
 }
 
 /*
@@ -396,11 +396,11 @@ int divpwr2(int x, int n) {
      * https://stackoverflow.com/questions/5061093/dividing-by-power-of-2-using-bit-shifting
      *
      */
-     // shift msb to first position
-     int shifted = x >> 31;
-     // create a mask by shifting n over 1 and adding -1
-     int mask = (1 << n) + ~0;
-     return (x + (shifted & mask)) >> n;
+    // shift msb to first position
+    int shifted = x >> 31;
+    // create a mask by shifting n over 1 and adding -1
+    int mask = (1 << n) + ~0;
+    return (x + (shifted & mask)) >> n;
 }
 
 /*
@@ -417,7 +417,7 @@ int abs(int x) {
      **/
     int msbX = x >> 31;
     int invMsb = (~msbX) + 1;
-    return((x ^ (msbX)) + invMsb);
+    return (x ^ (msbX)) + invMsb;
 }
 
 /*
