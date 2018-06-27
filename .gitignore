@@ -99,3 +99,9 @@ dkms.conf
 .idea/
 
 *.docx
+#Lab5
+*.gdb
+*.asm
+*.s
+ctarget
+rtarget
